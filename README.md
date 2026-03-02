@@ -1,10 +1,12 @@
-[vehicle_telemetry.csv](https://github.com/user-attachments/files/25688536/vehicle_telemetry.csv)AutoSentinel is an AI-powered vehicle fault detection system that combines deterministic rule-based logic with machine learning anomaly detection using Isolation Forest. It prioritizes alerts using a mathematically weighted scoring model and logs all telemetry events into SQLite for fleet-level monitoring and predictive maintenance.
+AutoSentinel is an AI-powered vehicle fault detection system that combines deterministic rule-based logic with machine learning anomaly detection using Isolation Forest. It prioritizes alerts using a mathematically weighted scoring model and logs all telemetry events into SQLite for fleet-level monitoring and predictive maintenance.
 
 
 
 Attachments:
-Video file: "https://github.com/user-attachments/assets/c94634f2-337e-4f03-9318-e7d10715fe5d"
-Drive link (PPT and Video): "https://drive.google.com/drive/folders/1OJKG6W_qIb-OAtMD9mo0cHyResqYsiWI?usp=sharing"
+Video file: [AutoSentinel_AI.mp4](https://github.com/user-attachments/assets/c94634f2-337e-4f03-9318-e7d10715fe5d)
+
+Drive link (PPT and Video): [PPT](https://drive.google.com/drive/folders/1OJKG6W_qIb-OAtMD9mo0cHyResqYsiWI?usp=sharing)
+
 Vehicle external dataset: [vehicle_telemetry.csv](https://github.com/user-attachments/files/25688550/vehicle_telemetry.csv)
 
 
