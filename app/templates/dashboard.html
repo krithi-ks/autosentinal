@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>🚗 AutoSentinel AI - Smart Vehicle Monitoring</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color: #fff;
+}
+
+.container {
+    max-width: 1200px;
+    margin: auto;
+    padding: 30px;
+}
+
+.card {
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(10px);
+    padding: 25px;
+    border-radius: 15px;
+    margin-bottom: 25px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.section-title {
+    margin-bottom: 20px;
+    font-size: 20px;
+    font-weight: bold;
+    color: #00e6ff;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    margin-bottom: 15px;
+}
+
+button {
+    background: #00c9ff;
+    color: black;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+button:hover {
+    background: #92fe9d;
+}
+
+.result-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px,1fr));
+    gap: 20px;
+}
+
+.badge {
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    display: inline-block;
+}
+
+.high { background: #ff4d4d; }
+.medium { background: #ffa500; }
+.low { background: #4CAF50; }
+
+.risk-bar {
+    width: 100%;
+    background: #444;
+    border-radius: 10px;
+    overflow: hidden;
+    height: 20px;
+}
+
+.risk-fill {
+    height: 100%;
+    background: linear-gradient(to right, green, yellow, red);
+    width: 65%;
+}
+
+.explain-box {
+    background: rgba(255,255,255,0.05);
+    padding: 15px;
+    border-radius: 10px;
+    margin-top: 15px;
+}
+
+ul {
+    margin-top: 10px;
+}
+
+</style>
+</head>
+
+<body>
+<div class="container">
+
+<h1>🚗 AutoSentinel AI – Intelligent Vehicle Health Monitor</h1>
+
+<!-- Telemetry Input -->
+<div class="card">
+    <div class="section-title">Enter Live Telemetry Data</div>
+
+    <label>Engine Temperature (°C)</label>
+    <input type="number" id="temp" value="120">
+
+    <label>Oil Pressure (psi)</label>
+    <input type="number" id="oil" value="18">
+
+    <label>Battery Voltage (V)</label>
+    <input type="number" id="battery" value="11.8">
+
+    <label>Brake Status (0 = Normal, 1 = Engaged)</label>
+    <input type="number" id="brake" value="1">
+
+    <label>Speed (km/h)</label>
+    <input type="number" id="speed" value="120">
+
+    <button onclick="analyzeVehicle()">Analyze Vehicle</button>
+</div>
+
+<!-- Alert Result -->
+<div class="card" id="resultSection" style="display:none;">
+    <div class="section-title">AI Diagnosis & Alert Intelligence</div>
+
+    <div class="result-grid">
+        <div>
+            <strong>Predicted Fault:</strong><br>
+            <span id="fault"></span>
+        </div>
+
+        <div>
+            <strong>Fault Probability:</strong><br>
+            <span id="prob"></span>
+        </div>
+
+        <div>
+            <strong>Priority Score:</strong><br>
+            <span id="priority"></span>
+        </div>
+
+        <div>
+            <strong>Alert Severity:</strong><br>
+            <span id="severity"></span>
+        </div>
+    </div>
+
+    <br>
+    <strong>Risk Level</strong>
+    <div class="risk-bar">
+        <div class="risk-fill" id="riskBar"></div>
+    </div>
+
+    <!-- Explainable AI -->
+    <div class="explain-box">
+        <strong>🔍 Why did AI predict this fault?</strong>
+        <ul id="explanationList"></ul>
+    </div>
+
+    <div class="explain-box">
+        <strong>🛠 Recommended Actions</strong>
+        <ul id="solutionList"></ul>
+    </div>
+
+</div>
+
+</div>
+
+<script>
+async function analyzeVehicle() {
+
+    document.getElementById("resultSection").style.display = "block";
+
+    const data = {
+        engine_temp: parseFloat(document.getElementById("temp").value),
+        oil_pressure: parseFloat(document.getElementById("oil").value),
+        battery_voltage: parseFloat(document.getElementById("battery").value),
+        brake_status: parseInt(document.getElementById("brake").value),
+        speed: parseFloat(document.getElementById("speed").value)
+    };
+
+    try {
+
+        const response = await fetch("http://127.0.0.1:8000/analyze", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+
+        // -------- BASIC OUTPUT --------
+        document.getElementById("fault").innerText = result.prediction;
+        document.getElementById("prob").innerText =
+            (result.fault_probability * 100).toFixed(2) + "%";
+
+        document.getElementById("priority").innerText =
+            result.priority_score.toFixed(3);
+
+        // -------- SEVERITY BADGE --------
+        let severityClass = "low";
+        if (result.category === "HIGH") severityClass = "high";
+        if (result.category === "MEDIUM") severityClass = "medium";
+
+        document.getElementById("severity").innerHTML =
+            `<span class="badge ${severityClass}">${result.category}</span>`;
+
+        // -------- RISK BAR --------
+        document.getElementById("riskBar").style.width =
+            (result.priority_score * 100) + "%";
+
+        // -------- EXPLAINABLE AI --------
+        const explanationBox = document.getElementById("explanationList");
+        explanationBox.innerHTML = "";
+
+        for (const [feature, value] of Object.entries(result.feature_contributions)) {
+
+            const li = document.createElement("li");
+
+            li.innerText =
+                `${feature} contributed ${value.toFixed(3)} impact to prediction`;
+
+            explanationBox.appendChild(li);
+        }
+
+        // -------- RULE ENGINE INSIGHT --------
+        if (result.rule_severity > 0) {
+            const ruleLi = document.createElement("li");
+            ruleLi.innerText =
+                `Rule Engine triggered severity level ${result.rule_severity}`;
+            explanationBox.appendChild(ruleLi);
+        }
+
+        // -------- RECOMMENDED ACTIONS --------
+        const solutionBox = document.getElementById("solutionList");
+        solutionBox.innerHTML = "";
+
+        if (result.category === "HIGH") {
+            solutionBox.innerHTML = `
+                <li>Stop vehicle immediately.</li>
+                <li>Allow engine to cool down.</li>
+                <li>Inspect coolant and oil system.</li>
+                <li>Seek mechanical service.</li>
+            `;
+        } else if (result.category === "MEDIUM") {
+            solutionBox.innerHTML = `
+                <li>Reduce vehicle speed.</li>
+                <li>Monitor temperature and oil pressure.</li>
+                <li>Schedule inspection soon.</li>
+            `;
+        } else {
+            solutionBox.innerHTML = `
+                <li>System operating normally.</li>
+                <li>Continue monitoring telemetry.</li>
+            `;
+        }
+
+    } catch (error) {
+        alert("Backend not running. Start FastAPI server.");
+        console.error(error);
+    }
+}
+</script>
+
+</body>
+</html>

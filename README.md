@@ -1,0 +1,1 @@
+AutoSentinel is an AI-powered vehicle fault detection system that combines deterministic rule-based logic with machine learning anomaly detection using Isolation Forest. It prioritizes alerts using a mathematically weighted scoring model and logs all telemetry events into SQLite for fleet-level monitoring and predictive maintenance.

@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+pandas
+numpy
+scikit-learn
+joblib
+sqlalchemy
+passlib[bcrypt]
+python-jose
+jinja2
+shap
