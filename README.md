@@ -2,7 +2,7 @@ AutoSentinel is an AI-powered vehicle fault detection system that combines deter
 
 Attachments:
 Video file: "https://github.com/user-attachments/assets/c94634f2-337e-4f03-9318-e7d10715fe5d"
-
+Drive link (PPT and Video): "https://drive.google.com/drive/folders/1OJKG6W_qIb-OAtMD9mo0cHyResqYsiWI?usp=sharing"
 
 
 Project Overview – AutoSentinel AI
